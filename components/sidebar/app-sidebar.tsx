@@ -18,7 +18,6 @@ import {
 import { NavMain } from "@/components/sidebar/nav-main";
 import { NavProjects } from "@/components/sidebar/nav-projects";
 import { NavUser } from "@/components/sidebar/nav-user";
-import { TeamSwitcher } from "@/components/sidebar/team-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -26,7 +25,6 @@ import {
   SidebarHeader,
   SidebarRail,
   SidebarMenu,
-  useSidebar,
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
@@ -162,9 +160,6 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { open } = useSidebar();
-  console.log(open);
-
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -172,7 +167,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
+              className="data-[slot=sidebar-menu-button]:!p-1.5 h-12"
             >
               <a href="#">
                 <Layers2 className="!size-5" />
@@ -188,7 +183,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
