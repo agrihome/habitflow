@@ -1,14 +1,30 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { onAuthStateChanged, signInWithPopup, signOut, User } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
-import { signInWithPopup, signOut } from "firebase/auth";
+import { AuthUser } from "@/types/auth";
 
-// --- Async thunks ---
-export const loginWithGoogle = createAsyncThunk(
+// --- State Type ---
+interface AuthState {
+  user: AuthUser | null;
+  loading: boolean;
+  error: string | null;
+  status: "idle" | "checking" | "authenticated" | "unauthenticated";
+}
+
+const initialState: AuthState = {
+  user: null,
+  loading: false,
+  error: null,
+  status: "idle",
+};
+
+// --- Thunks ---
+export const loginWithGoogle = createAsyncThunk<AuthUser, void, { rejectValue: string }>(
   "auth/loginWithGoogle",
   async (_, { rejectWithValue }) => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
+      const user: User = result.user;
       return {
         uid: user.uid,
         email: user.email,
@@ -26,30 +42,38 @@ export const logoutUser = createAsyncThunk("auth/logout", async () => {
   return null;
 });
 
-// --- Slice ---
+export const listenToAuthChanges = createAsyncThunk<void, void>(
+  "auth/listenToAuthChanges",
+  async (_, { dispatch }) => {
+    dispatch(setLoading(true));
+    return new Promise<void>((resolve) => {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          dispatch(
+            setUser({
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+              photoURL: user.photoURL,
+            })
+          );
+        } else {
+          dispatch(setUser(null));
+        }
+        dispatch(setLoading(false));
+        resolve();
+      });
+    });
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
-  initialState: {
-    user: null as null | {
-      uid: string;
-      email: string | null;
-      displayName: string | null;
-      photoURL: string | null;
-    },
-    loading: false,
-    error: null as string | null,
-  },
+  initialState,
   reducers: {
-    setUser: (
-      state,
-      action: PayloadAction<{
-        uid: string;
-        email: string | null;
-        displayName: string | null;
-        photoURL: string | null;
-      } | null>
-    ) => {
+    setUser: (state, action: PayloadAction<AuthUser | null>) => {
       state.user = action.payload;
+      state.status = action.payload ? "authenticated" : "unauthenticated";
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
@@ -64,6 +88,7 @@ const authSlice = createSlice({
       state.user = null;
       state.loading = false;
       state.error = null;
+      state.status = "unauthenticated";
     },
   },
   extraReducers: (builder) => {
@@ -72,9 +97,10 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(loginWithGoogle.fulfilled, (state, action) => {
+      .addCase(loginWithGoogle.fulfilled, (state, action: PayloadAction<AuthUser>) => {
         state.loading = false;
         state.user = action.payload;
+        state.status = "authenticated";
       })
       .addCase(loginWithGoogle.rejected, (state, action) => {
         state.loading = false;
@@ -82,11 +108,10 @@ const authSlice = createSlice({
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
+        state.status = "unauthenticated";
       });
   },
 });
 
-export const { setUser, setLoading, setError, clearError, resetAuth } =
-  authSlice.actions;
-
+export const { setUser, setLoading, setError, clearError, resetAuth } = authSlice.actions;
 export default authSlice.reducer;

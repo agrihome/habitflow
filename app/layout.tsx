@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Provider } from "react-redux";
 import { store } from "@/redux/store";
+import AuthInitializer from "@/components/auth/authInitializer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,8 +16,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,7 +26,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Provider store={store}>{children}</Provider>
+        <Provider store={store}>
+          <AuthInitializer >
+            {children}
+          </AuthInitializer>
+        </Provider>
       </body>
     </html>
   );
