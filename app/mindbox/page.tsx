@@ -92,7 +92,7 @@ export default function Page() {
 // Task item component
 function TaskItem({ task, onRemove }: { task: string; onRemove: () => void }) {
   return (
-    <span className="flex items-center gap-2 px-3 py-1 rounded-2xl border text-sm transition whitespace-nowrap">
+    <span className="flex items-center gap-2 px-3 py-1 rounded-2xl border text-sm transition">
       {task}
       <button
         onClick={onRemove}
