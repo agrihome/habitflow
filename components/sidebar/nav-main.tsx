@@ -39,15 +39,6 @@ export function NavMain({
     <SidebarGroup>
       <SidebarGroupLabel>Tasks</SidebarGroupLabel>
       <SidebarMenu>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <Link href="/mindbox">
-              <Box />
-              MindBox
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-
         {items.map((item) => (
           <Collapsible
             key={item.title}
@@ -79,6 +70,15 @@ export function NavMain({
             </SidebarMenuItem>
           </Collapsible>
         ))}
+
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild>
+            <Link href="/mindbox">
+              <Box />
+              MindBox
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
   );

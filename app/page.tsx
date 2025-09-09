@@ -3,6 +3,7 @@
 import { useAppDispatch } from "@/redux/hooks";
 import { setHeader } from "@/redux/headerSlice";
 import { useEffect } from "react";
+
 export default function Page() {
   const dispatch = useAppDispatch();
 
