@@ -28,19 +28,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
 
-  const dispatch = useDispatch<AppDispatch>();
-  const { user } = useSelector((state: RootState) => state.auth);
+  const dispatch = useAppDispatch();
+  const { user, status } = useAppSelector((state) => state.auth);
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         {!user ? (
           // SIGN IN DIALOG
-          <Dialog>
+          <Dialog open={status === "unauthenticated" ? true : false}>
             <DialogTrigger asChild>
               <SidebarMenuButton
                 asChild
@@ -72,7 +73,7 @@ export function NavUser() {
                     src={user.photoURL ?? ""}
                     alt={user.email ?? ""}
                   />
-                  <AvatarFallback className="rounded-lg">
+                  <AvatarFallback className="rounded-lg bg-red-400">
                     {user.email ? user.email[0].toUpperCase() : "U"}
                   </AvatarFallback>
                 </Avatar>

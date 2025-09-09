@@ -18,11 +18,6 @@ export function LoginForm({
     dispatch(loginWithGoogle());
   };
 
-  const handleSignUp = () => {
-    // 👉 Here you can route to your signup page
-    // e.g., using next/router: router.push("/signup")
-    console.log("Redirect to signup page");
-  };
 
   return (
     <div

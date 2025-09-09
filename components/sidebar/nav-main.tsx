@@ -18,6 +18,9 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
+import { Box } from "lucide-react";
+import Link from "next/link";
+
 export function NavMain({
   items,
 }: {
@@ -34,8 +37,17 @@ export function NavMain({
 }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>Tasks</SidebarGroupLabel>
       <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild>
+            <Link href="/mindbox">
+              <Box />
+              MindBox
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+
         {items.map((item) => (
           <Collapsible
             key={item.title}
