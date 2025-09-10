@@ -19,7 +19,7 @@ export default function AuthInitializer({
 
   if (status === "idle" || status === "checking") {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-full">
         <Loader />
       </div>
     );

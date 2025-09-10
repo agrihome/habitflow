@@ -1,17 +1,9 @@
 "use client";
 
 import * as React from "react";
-import {
-  CalendarDays,
-  Frame,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-  Layers2,
-} from "lucide-react";
+import { CalendarDays, Frame, Map, PieChart, Layers2 } from "lucide-react";
 
-import { NavMain } from "@/components/sidebar/nav-main";
+import  TaskSidebarGroup  from "@/components/sidebar/tasks-milestones";
 import { NavProjects } from "@/components/sidebar/nav-projects";
 import { NavUser } from "@/components/sidebar/nav-user";
 import {
@@ -28,32 +20,6 @@ import Link from "next/link";
 
 // This is sample data.
 const data = {
-  navMain: [
-    {
-      title: "Timeline Tasks",
-      url: "#",
-      icon: CalendarDays,
-      isActive: true,
-      items: [
-        {
-          title: "Daily",
-          url: "#",
-        },
-        {
-          title: "Weekly",
-          url: "#",
-        },
-        {
-          title: "Monthly",
-          url: "#",
-        },
-        {
-          title: "Yearly",
-          url: "#",
-        },
-      ],
-    },
-  ],
   projects: [
     {
       name: "Design Engineering",
@@ -92,7 +58,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <TaskSidebarGroup />
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>

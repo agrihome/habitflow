@@ -1,6 +1,11 @@
 "use client";
 
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import {
+  ChevronRight,
+  Milestone,
+  CalendarDays,
+  type LucideIcon,
+} from "lucide-react";
 
 import {
   Collapsible,
@@ -21,23 +26,33 @@ import {
 import { Box } from "lucide-react";
 import Link from "next/link";
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string;
-    url: string;
-    icon?: LucideIcon;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
-  }[];
-}) {
+export default function NavMain() {
+  const items = [
+    {
+      title: "Timeline Tasks",
+      url: "#",
+      icon: CalendarDays,
+      isActive: true,
+      items: [
+        {
+          title: "Daily",
+          url: "#",
+        },
+        {
+          title: "Weekly",
+          url: "#",
+        },
+        {
+          title: "Monthly",
+          url: "#",
+        },
+      ],
+    },
+  ];
+
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Tasks</SidebarGroupLabel>
+      <SidebarGroupLabel>Tasks & Milestones</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
@@ -70,6 +85,15 @@ export function NavMain({
             </SidebarMenuItem>
           </Collapsible>
         ))}
+
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild>
+            <Link href="/mindbox">
+              <Milestone />
+              MileStones
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
 
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
