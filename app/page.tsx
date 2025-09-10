@@ -11,5 +11,5 @@ export default function Page() {
     dispatch(setHeader(["home"]));
   }, [dispatch]);
 
-  return <></>;
+  return <span className="p-5">In home</span>;
 }

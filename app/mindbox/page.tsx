@@ -32,7 +32,7 @@ export default function Page() {
     }
 
     loadTasks();
-  }, [dispatch, USER_ID]);
+  }, [dispatch]);
 
   // Handle add task
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,7 +73,10 @@ export default function Page() {
       <h1 className="text-2xl font-semibold mb-4">Mindbox</h1>
 
       {/* Task form */}
-      <form onSubmit={handleSubmit} className="mb-4 flex flex-wrap gap-2 pb-3 items-center">
+      <form
+        onSubmit={handleSubmit}
+        className="mb-4 flex flex-wrap gap-2 pb-3 items-center"
+      >
         <input
           type="text"
           value={newTask}
