@@ -1,7 +1,5 @@
 "use client";
 
-import { useDispatch, useSelector } from "react-redux";
-import { RootState, AppDispatch } from "@/redux/store";
 import { logoutUser } from "@/redux/authSlice"; // we'll use this
 import {
   Dialog,
@@ -34,14 +32,14 @@ export function NavUser() {
   const { isMobile } = useSidebar();
 
   const dispatch = useAppDispatch();
-  const { user, status } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state) => state.auth);
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         {!user ? (
           // SIGN IN DIALOG
-          <Dialog open={status === "unauthenticated" ? true : false}>
+          <Dialog>
             <DialogTrigger asChild>
               <SidebarMenuButton
                 asChild
