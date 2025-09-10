@@ -36,6 +36,8 @@ export default function Page() {
 
   // Handle add task
   const handleSubmit = async (e: React.FormEvent) => {
+
+    setNewTask("");
     e.preventDefault();
     if (newTask.trim() === "") return;
 
@@ -43,14 +45,12 @@ export default function Page() {
 
     if (tasks.includes(task)) {
       setError("⚠️ Task already exists");
-      setNewTask("");
       return;
     }
 
     try {
+      setTasks((prev) => [...prev, task]);
       await addToMindbox(USER_ID, task);
-      setTasks((prev) => [...prev, task]); // optimistic update
-      setNewTask("");
       setError("");
     } catch (err) {
       console.error("Failed to add task:", err);
