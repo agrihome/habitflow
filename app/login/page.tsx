@@ -25,7 +25,7 @@ export default function Page() {
   return (
     <Dialog open={true}>
       <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
+        <DialogHeader className="hidden">
           <DialogTitle className="mt-8 text-center">Sign In</DialogTitle>
         </DialogHeader>
         <LoginForm />
