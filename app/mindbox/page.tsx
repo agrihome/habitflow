@@ -9,14 +9,16 @@ import {
   getMindboxItems,
 } from "@/lib/mindboxService";
 import { Trash } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 export default function Page() {
   const dispatch = useAppDispatch();
   const [tasks, setTasks] = useState<string[]>([]);
   const [newTask, setNewTask] = useState("");
+  const [error, setError] = useState("");
   const USER_ID = useAppSelector((state) => state.auth.user?.uid) as string;
 
-  // Set header + load tasks
+  // Load tasks
   useEffect(() => {
     dispatch(setHeader(["mindbox"]));
 
@@ -30,7 +32,7 @@ export default function Page() {
     }
 
     loadTasks();
-  }, [dispatch]);
+  }, [dispatch, USER_ID]);
 
   // Handle add task
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,12 +41,20 @@ export default function Page() {
 
     const task = newTask.trim();
 
+    if (tasks.includes(task)) {
+      setError("⚠️ Task already exists");
+      setNewTask("");
+      return;
+    }
+
     try {
       await addToMindbox(USER_ID, task);
       setTasks((prev) => [...prev, task]); // optimistic update
       setNewTask("");
+      setError("");
     } catch (err) {
       console.error("Failed to add task:", err);
+      setError("❌ Failed to add task");
     }
   };
 
@@ -63,7 +73,7 @@ export default function Page() {
       <h1 className="text-2xl font-semibold mb-4">Mindbox</h1>
 
       {/* Task form */}
-      <form onSubmit={handleSubmit} className="mb-4 flex gap-2 pb-5">
+      <form onSubmit={handleSubmit} className="mb-4 flex flex-wrap gap-2 pb-3 items-center">
         <input
           type="text"
           value={newTask}
@@ -77,7 +87,10 @@ export default function Page() {
         >
           Add
         </button>
+        {error && <p className="text-red-500 ml-4">{error}</p>}
       </form>
+
+      {/* Error message */}
 
       {/* Task list */}
       <div className="flex flex-wrap gap-2">
@@ -94,11 +107,13 @@ function TaskItem({ task, onRemove }: { task: string; onRemove: () => void }) {
   return (
     <span className="flex items-center gap-2 px-3 py-1 rounded-2xl border text-sm transition">
       {task}
+      <Separator orientation="vertical" />
+
       <button
         onClick={onRemove}
         className="text-red-500 hover:text-red-700 text-xs"
       >
-        <Trash className="w-4 h-4"></Trash>
+        <Trash className="w-4 h-4" />
       </button>
     </span>
   );
