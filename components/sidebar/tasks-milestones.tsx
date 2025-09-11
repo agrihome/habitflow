@@ -88,7 +88,7 @@ export default function NavMain() {
 
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
-            <Link href="/mindbox">
+            <Link href="/milestones">
               <Milestone />
               MileStones
             </Link>
