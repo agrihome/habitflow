@@ -7,18 +7,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppSelector } from "@/redux/hooks";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Page() {
-  const dispatch = useAppDispatch();
   const { user, status } = useAppSelector((state) => state.auth);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
+    const next = searchParams.get("next");
+
     if (status !== "unauthenticated") {
-      router.push("/");
+      router.push(next || "/");
     }
   }, [status]);
 

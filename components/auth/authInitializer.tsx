@@ -24,7 +24,8 @@ export default function AuthInitializer({
     if (status === "unauthenticated") {
       // Only redirect if not already on login/register
       if (pathname !== "/login" && pathname !== "/register") {
-        router.push("/login");
+        // Redirect to the login page and include the current path in the 'next' query parameter
+        router.push(`/login?next=${pathname}`);
       }
     }
   }, [status, router, pathname]);
