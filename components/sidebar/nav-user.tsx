@@ -71,7 +71,7 @@ export function NavUser() {
                     src={user.photoURL ?? ""}
                     alt={user.email ?? ""}
                   />
-                  <AvatarFallback className="rounded-lg bg-red-400">
+                  <AvatarFallback className="rounded-lg bg-[#ef6b03]">
                     {user.email ? user.email[0].toUpperCase() : "U"}
                   </AvatarFallback>
                 </Avatar>

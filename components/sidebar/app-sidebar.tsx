@@ -3,7 +3,7 @@
 import * as React from "react";
 import { CalendarDays, Frame, Map, PieChart, Layers2 } from "lucide-react";
 
-import  TaskSidebarGroup  from "@/components/sidebar/tasks-milestones";
+import  TaskSidebarGroup  from "@/components/sidebar/tasks";
 import { NavProjects } from "@/components/sidebar/nav-projects";
 import { NavUser } from "@/components/sidebar/nav-user";
 import {
