@@ -33,7 +33,7 @@ export default function NavMain() {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
-            <Link href="/paths">
+            <Link href="/tasks">
               <CalendarDays />
               Tasks
             </Link>
