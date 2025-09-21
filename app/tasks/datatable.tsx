@@ -13,7 +13,23 @@ import {
   VisibilityState,
   RowSelectionState,
 } from "@tanstack/react-table";
-import { ArrowUp, ArrowDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import {
+  ArrowUp,
+  ArrowDown,
+  ChevronDown,
+  MoreHorizontal,
+  PlusIcon,
+} from "lucide-react";
+import {
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerTitle,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerDescription,
+  DrawerClose,
+} from "@/components/ui/drawer";
 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
@@ -43,9 +59,12 @@ interface DataTableProps {
   data: Task[];
 }
 
-// ----------------------
-// Column definitions
-// ----------------------
+interface EditDrawerProps {
+  isOpen: boolean;
+  editTaskId: string;
+  setIsEditDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 export const columns: ColumnDef<Task>[] = [
   {
     accessorKey: "taskName",
@@ -190,15 +209,15 @@ export const columns: ColumnDef<Task>[] = [
   },
 ];
 
-// ----------------------
-// DataTable component with global search
-// ----------------------
 export function DataTable({ data }: DataTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState<string>(""); // single input filter
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
+
+  const [editTaskId, setEditTaskId] = React.useState("1");
+  const [isEditDrawerOpen, setIsEditDrawerOpen] = React.useState(false);
 
   const table = useReactTable({
     data,
@@ -239,16 +258,16 @@ export function DataTable({ data }: DataTableProps) {
   return (
     <div className="w-full">
       {/* Global Filter + Column toggle */}
-      <div className="flex items-center py-4 gap-4">
+      <div className="sm:flex items-center py-4 gap-4 grid grid-cols-2">
         <Input
           placeholder="Search all columns..."
           value={globalFilter ?? ""}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          className="max-w-sm"
+          className="md:max-w-sm col-span-2"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="self-start w-fit">
               Columns <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -268,6 +287,12 @@ export function DataTable({ data }: DataTableProps) {
               ))}
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <TaskEditor>
+          <Button className="w-fit ml-auto">
+            <PlusIcon /> Add new
+          </Button>
+        </TaskEditor>
       </div>
 
       {/* Table */}
@@ -299,23 +324,32 @@ export function DataTable({ data }: DataTableProps) {
           <TableBody>
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} className="gap-[4px]">
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={`
+                <TaskEditor key={row.id}>
+                  <TableRow
+                    key={row.id}
+                    className="gap-[4px]"
+                    onClick={() => {
+                      setEditTaskId(String(row.id));
+                      setIsEditDrawerOpen(true);
+                    }}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        className={`
                 px-3 py-2 truncate
                 ${cell.column.id === "description" ? "w-[250px]" : "w-[160px]"}
               `}
-                      title={String(cell.getValue())}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
+                        title={String(cell.getValue())}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TaskEditor>
               ))
             ) : (
               <TableRow>
@@ -358,5 +392,28 @@ export function DataTable({ data }: DataTableProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+function TaskEditor({ children }: { children: React.ReactNode }) {
+  return (
+    <Drawer direction="right">
+      <DrawerTrigger asChild>{children}</DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader className="gap-1">
+          <DrawerTitle>Header</DrawerTitle>
+          <DrawerDescription>
+            Showing total visitors for the last 6 months
+          </DrawerDescription>
+        </DrawerHeader>
+
+        <DrawerFooter>
+          <Button>Submit</Button>
+          <DrawerClose asChild>
+            <Button variant="outline">Done</Button>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 }
