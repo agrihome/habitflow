@@ -12,12 +12,13 @@ const chartData = [
   { month: "May", desktop: 209 },
   { month: "June", desktop: 214 },
 ];
+
+// chart comment
 const chartConfig = {
   desktop: {
     label: "Desktop",
     color: "#2563eb",
   },
-  
 } satisfies ChartConfig;
 export function Component() {
   return (
