@@ -1,9 +1,10 @@
-function Layout({
+"use client";
+import MainContainer from "@/components/ui/main";
+
+export default function layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <main className="p-5">{children}</main>;
+  return <MainContainer>{children}</MainContainer>;
 }
-
-export default Layout;

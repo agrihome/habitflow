@@ -1,9 +1,17 @@
 "use client";
 
 import * as React from "react";
-import { CalendarDays, Frame, Map, PieChart, Layers2 } from "lucide-react";
+import {
+  CalendarDays,
+  Frame,
+  Map,
+  PieChart,
+  Milestone,
+  Layers2,
+  Box,
+} from "lucide-react";
 
-import  TaskSidebarGroup  from "@/components/sidebar/tasks";
+import TaskSidebarGroup from "@/components/sidebar/tasks";
 import { NavProjects } from "@/components/sidebar/nav-projects";
 import { NavUser } from "@/components/sidebar/nav-user";
 import {
@@ -15,6 +23,8 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarGroup,
+  SidebarGroupLabel,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 
@@ -58,8 +68,68 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <TaskSidebarGroup />
-        <NavProjects projects={data.projects} />
+        <SidebarGroup>
+          <SidebarGroupLabel>Paths & Tasks</SidebarGroupLabel>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/tasks">
+                  <CalendarDays />
+                  Tasks
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/paths">
+                  <Milestone />
+                  Paths & Milestones
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/mindbox">
+                  <Box />
+                  MindBox
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Habits</SidebarGroupLabel>
+          {/* <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/tasks">
+                  <CalendarDays />
+                  Tasks
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/paths">
+                  <Milestone />
+                  Paths & Milestones
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/mindbox">
+                  <Box />
+                  MindBox
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu> */}
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
