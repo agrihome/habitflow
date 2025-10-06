@@ -22,7 +22,7 @@ export default function Page() {
   }, [dispatch]);
 
   return (
-    <section className="flex flex-wrap justify-start gap-5">
+    <section className="grid grid-cols-1 mt-10 sm:mt-0  sm:grid-cols-[repeat(auto-fill,minmax(320px,1fr))] justify-start gap-5 p-5">
       {Array.from({ length: 5 }).map((_, idx) => (
         <PathCard key={idx} />
       ))}
@@ -32,8 +32,8 @@ export default function Page() {
 
 function PathCard() {
   return (
-    <Link href="/paths/id">
-      <Card className="min-w-xs">
+    <Link href="/paths/id" className=" w-[320px] sm:w-full  block">
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Health</CardTitle>
           <CardDescription>small desc</CardDescription>
