@@ -61,7 +61,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <Link href="/">
                 <Layers2 className="!size-5" />
-                <span className="text-base font-semibold">Habit flow</span>
+                <span className="text-base font-semibold">Pathflow</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

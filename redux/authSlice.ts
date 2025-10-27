@@ -1,7 +1,13 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { onAuthStateChanged, signInWithPopup, signOut, User } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  signInWithPopup,
+  signOut,
+  User,
+} from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import { AuthUser } from "@/types/auth";
+import { ensureCurrentUserDoc } from "@/lib/user";
 
 // --- State Type ---
 interface AuthState {
@@ -19,23 +25,26 @@ const initialState: AuthState = {
 };
 
 // --- Thunks ---
-export const loginWithGoogle = createAsyncThunk<AuthUser, void, { rejectValue: string }>(
-  "auth/loginWithGoogle",
-  async (_, { rejectWithValue }) => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user: User = result.user;
-      return {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-      };
-    } catch (err: any) {
-      return rejectWithValue(err.message);
-    }
+export const loginWithGoogle = createAsyncThunk<
+  AuthUser,
+  void,
+  { rejectValue: string }
+>("auth/loginWithGoogle", async (_, { rejectWithValue }) => {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    const user: User = result.user;
+
+    await ensureCurrentUserDoc();
+    return {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+    };
+  } catch (err: any) {
+    return rejectWithValue(err.message);
   }
-);
+});
 
 export const logoutUser = createAsyncThunk("auth/logout", async () => {
   await signOut(auth);
@@ -97,11 +106,14 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(loginWithGoogle.fulfilled, (state, action: PayloadAction<AuthUser>) => {
-        state.loading = false;
-        state.user = action.payload;
-        state.status = "authenticated";
-      })
+      .addCase(
+        loginWithGoogle.fulfilled,
+        (state, action: PayloadAction<AuthUser>) => {
+          state.loading = false;
+          state.user = action.payload;
+          state.status = "authenticated";
+        }
+      )
       .addCase(loginWithGoogle.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
@@ -113,5 +125,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser, setLoading, setError, clearError, resetAuth } = authSlice.actions;
+export const { setUser, setLoading, setError, clearError, resetAuth } =
+  authSlice.actions;
 export default authSlice.reducer;

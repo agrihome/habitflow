@@ -8,6 +8,8 @@ import AuthInitializer from "@/components/auth/authInitializer";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import Header from "@/components/layout/header";
+import { Toaster } from "sonner";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,6 +21,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,6 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <title>Pathflow</title>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -38,6 +43,7 @@ export default function RootLayout({
             </SidebarInset>
           </SidebarProvider>
         </Provider>
+        <Toaster position="bottom-center"  />
       </body>
     </html>
   );
