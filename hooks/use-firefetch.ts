@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { CollectionKey } from "@/lib/firestorePaths";
 
-const useFirefetch = <T, Args extends any[]>(
-  fn: (...args: Args) => Promise<T>,
-  args: Args
+
+const useFirefetch = <T>(
+  fn: (args: CollectionKey) => Promise<T>,
+  args: CollectionKey
 ) => {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -14,10 +16,9 @@ const useFirefetch = <T, Args extends any[]>(
 
   useEffect(() => {
     let isMounted = true;
-
     const fetchData = async () => {
       try {
-        const result = await fn(...args);
+        const result = await fn(args);
         if (isMounted) setData(result);
       } catch (err) {
         if (isMounted) setError(err);
@@ -31,7 +32,7 @@ const useFirefetch = <T, Args extends any[]>(
     return () => {
       isMounted = false;
     };
-  }, [fn, ...args]); // refetch if function or any argument changes
+  }, [fn, args]); // refetch if function or any argument changes
 
   return { data, loading, error, mutateData };
 };

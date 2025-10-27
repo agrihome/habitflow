@@ -1,6 +1,6 @@
 "use client";
 
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hooks";
 import { setHeader } from "@/redux/headerSlice";
 import { useEffect, useState } from "react";
 import {
@@ -42,6 +42,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Path } from "@/types/path";
+import { getDocuments } from "@/lib/firebase-helpers";
 
 import {
   Select,
@@ -71,143 +72,138 @@ type PathFormData = z.infer<typeof pathSchema>;
 export default function Page() {
 
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state) => state.auth);
+  const { data: paths , loading, error, mutateData } = useFirefetch<Path[]>(getDocuments,"paths")
 
-  const {
-    data: paths,
-    loading,
-    error,
-    mutateData,
-  } = useFirefetch<Path[], [string]>(getPaths, [user?.uid] as [string]);
+  
 
-  function NewPath({ children, userId }: NewPathProps) {
-    const [loading, setLoading] = useState(false);
+  // function NewPath({ children, userId }: NewPathProps) {
+  //   const [loading, setLoading] = useState(false);
 
-    const form = useForm<PathFormData>({
-      resolver: zodResolver(pathSchema),
-      defaultValues: {
-        name: "",
-        description: "",
-        status: "",
-      },
-    });
+  //   const form = useForm<PathFormData>({
+  //     resolver: zodResolver(pathSchema),
+  //     defaultValues: {
+  //       name: "",
+  //       description: "",
+  //       status: "",
+  //     },
+  //   });
 
-    async function onSubmit(values: PathFormData) {
-      try {
-        setLoading(true);
+  //   async function onSubmit(values: PathFormData) {
+  //     try {
+  //       setLoading(true);
 
-        const path = await addPath(userId, {
-          ...values,
-          status: values.status || "draft",
-          completed: false,
-          taskCount: 0,
-        } as Omit<Path, "id" | "created" | "updated" | "lastUsed">);
+  //       const path = await addPath(userId, {
+  //         ...values,
+  //         status: values.status || "draft",
+  //         completed: false,
+  //         taskCount: 0,
+  //       } as Omit<Path, "id" | "created" | "updated" | "lastUsed">);
 
-        toast.success("New path created successfully!");
-        form.reset();
+  //       toast.success("New path created successfully!");
+  //       form.reset();
 
-        mutateData([path, ...(paths ?? [])]);
-      } catch (err: any) {
-        toast.error(err.message || "Failed to create path");
-      } finally {
-        setLoading(false);
-      }
-    }
+  //       mutateData([path, ...(paths ?? [])]);
+  //     } catch (err: any) {
+  //       toast.error(err.message || "Failed to create path");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
 
-    return (
-      <Drawer direction="right">
-        <DrawerTrigger asChild>{children}</DrawerTrigger>
-        <DrawerContent>
-          <DrawerHeader className="gap-1">
-            <DrawerTitle>New Path</DrawerTitle>
-            <DrawerDescription>
-              Remember each path should have a well-defined purpose and your
-              deep desire to succeed.
-            </DrawerDescription>
-          </DrawerHeader>
+  //   return (
+  //     <Drawer direction="right">
+  //       <DrawerTrigger asChild>{children}</DrawerTrigger>
+  //       <DrawerContent>
+  //         <DrawerHeader className="gap-1">
+  //           <DrawerTitle>New Path</DrawerTitle>
+  //           <DrawerDescription>
+  //             Remember each path should have a well-defined purpose and your
+  //             deep desire to succeed.
+  //           </DrawerDescription>
+  //         </DrawerHeader>
 
-          <div className="p-4">
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="flex flex-col gap-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="New path name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+  //         <div className="p-4">
+  //           <Form {...form}>
+  //             <form
+  //               onSubmit={form.handleSubmit(onSubmit)}
+  //               className="flex flex-col gap-4"
+  //             >
+  //               <FormField
+  //                 control={form.control}
+  //                 name="name"
+  //                 render={({ field }) => (
+  //                   <FormItem>
+  //                     <FormLabel>Name</FormLabel>
+  //                     <FormControl>
+  //                       <Input placeholder="New path name" {...field} />
+  //                     </FormControl>
+  //                     <FormMessage />
+  //                   </FormItem>
+  //                 )}
+  //               />
 
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Describe what this path is about..."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+  //               <FormField
+  //                 control={form.control}
+  //                 name="description"
+  //                 render={({ field }) => (
+  //                   <FormItem>
+  //                     <FormLabel>Description</FormLabel>
+  //                     <FormControl>
+  //                       <Textarea
+  //                         placeholder="Describe what this path is about..."
+  //                         {...field}
+  //                       />
+  //                     </FormControl>
+  //                     <FormMessage />
+  //                   </FormItem>
+  //                 )}
+  //               />
 
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Status</FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                        >
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select the status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectLabel>Status</SelectLabel>
-                              <SelectItem value="active">Active</SelectItem>
-                              <SelectItem value="archived">Archived</SelectItem>
-                              <SelectItem value="draft">Draft</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+  //               <FormField
+  //                 control={form.control}
+  //                 name="status"
+  //                 render={({ field }) => (
+  //                   <FormItem>
+  //                     <FormLabel>Status</FormLabel>
+  //                     <FormControl>
+  //                       <Select
+  //                         onValueChange={field.onChange}
+  //                         value={field.value}
+  //                       >
+  //                         <SelectTrigger className="w-[180px]">
+  //                           <SelectValue placeholder="Select the status" />
+  //                         </SelectTrigger>
+  //                         <SelectContent>
+  //                           <SelectGroup>
+  //                             <SelectLabel>Status</SelectLabel>
+  //                             <SelectItem value="active">Active</SelectItem>
+  //                             <SelectItem value="archived">Archived</SelectItem>
+  //                             <SelectItem value="draft">Draft</SelectItem>
+  //                           </SelectGroup>
+  //                         </SelectContent>
+  //                       </Select>
+  //                     </FormControl>
+  //                     <FormMessage />
+  //                   </FormItem>
+  //                 )}
+  //               />
 
-                <Button type="submit" disabled={loading}>
-                  {loading ? "Adding..." : "Add Path"}
-                </Button>
-              </form>
-            </Form>
-          </div>
+  //               <Button type="submit" disabled={loading}>
+  //                 {loading ? "Adding..." : "Add Path"}
+  //               </Button>
+  //             </form>
+  //           </Form>
+  //         </div>
 
-          <DrawerFooter>
-            <DrawerClose asChild>
-              <Button variant="outline">Close</Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
-    );
-  }
+  //         <DrawerFooter>
+  //           <DrawerClose asChild>
+  //             <Button variant="outline">Close</Button>
+  //           </DrawerClose>
+  //         </DrawerFooter>
+  //       </DrawerContent>
+  //     </Drawer>
+  //   );
+  // }
 
   useEffect(() => {
     dispatch(setHeader(["paths & Milestones"]));
@@ -218,13 +214,13 @@ export default function Page() {
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold">Paths</h1>
 
-        {user?.uid && (
+        {/* {user?.uid && (
           <NewPath userId={user.uid}>
             <Button>
               <PlusIcon /> New Path
             </Button>
           </NewPath>
-        )}
+        )} */}
       </div>
 
       <div className="grid grid-cols-1 mt-10   sm:grid-cols-[repeat(auto-fill,minmax(320px,1fr))] justify-start gap-5">
